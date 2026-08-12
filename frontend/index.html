@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>我的任务清单</h1>
+
+        <!-- 新增任务输入区 -->
+        <div class="add-area">
+            <input type="text" id="titleInput" placeholder="输入任务标题（必填）">
+            <input type="text" id="contentInput" placeholder="输入任务详情（选填）">
+            <input type="date" id="deadlineInput">
+            <button id="addBtn">添加任务</button>
+        </div>
+
+        <!-- 筛选按钮 -->
+        <div class="filter-area">
+            <button class="filter-btn active" data-status="all">全部</button>
+            <button class="filter-btn" data-status="0">未完成</button>
+            <button class="filter-btn" data-status="1">已完成</button>
+        </div>
+
+        <!-- 任务列表 -->
+        <ul id="todoList" class="todo-list"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
