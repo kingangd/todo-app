@@ -1,12 +1,16 @@
 # 导入核心模块
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+import os
 import db  # 导入同目录下的 db.py 文件
 
-# 初始化Flask应用
+# 初始化Flask应用，并启用CORS
 app = Flask(__name__)
-CORS(app)  # 解决跨域
+CORS(app)
 
+# 在模块导入时初始化数据库（保证在 gunicorn 等 WSGI 服务器下也会执行）
+# init_db 使用 IF NOT EXISTS 创建表，所以多次调用是安全的
+db.init_db()
 
 # --------------------------
 # 接口1：获取所有任务
@@ -74,8 +78,25 @@ def delete_todo(todo_id):
 
 
 # --------------------------
-# 程序入口
+# 静态文件：将 frontend 目录作为单页面应用静态资源一起托管
+# 这样在 Render 上只需部署一个 Web Service，即可同时提供前端页面与后端 API
+# --------------------------
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    # 如果请求的静态资源存在，就直接返回它；否则返回 index.html（支持 SPA 路由）
+    if path and os.path.exists(os.path.join(FRONTEND_DIR, path)):
+        return send_from_directory(FRONTEND_DIR, path)
+    return send_from_directory(FRONTEND_DIR, 'index.html')
+
+
+# --------------------------
+# 程序入口（仅在本地直接运行时使用）
+# 在 Render 或使用 gunicorn 部署时，gunicorn 会导入这个模块并运行 app
 # --------------------------
 if __name__ == '__main__':
-    db.init_db()  # 启动时调用db层的初始化函数
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    # 本地启动仍使用 debug 模式以便调试
+    app.run(debug=True, host='0.0.0.0', port=port)
