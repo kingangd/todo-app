@@ -1,5 +1,5 @@
-// 后端接口地址，和你 Flask 启动的地址保持一致
-const BASE_URL = 'http://127.0.0.1:5000/api/todos';
+// 后端接口地址，部署到 Render/其他服务器后使用相对路径
+const BASE_URL = '/api/todos';
 // 当前筛选状态：all=全部，0=未完成，1=已完成
 let currentFilter = 'all';
 
