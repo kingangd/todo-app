@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: todo-app
+    env: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT
+    disk:
+      # 挂载到 Render 容器内的路径，匹配仓库中 backend 目录位置
+      mountPath: /opt/render/project/src/backend
+      sizeGB: 1
